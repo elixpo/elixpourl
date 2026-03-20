@@ -157,7 +157,7 @@ export async function exchangeCode(code: string, requestUrl: string): Promise<OA
       grant_type: 'authorization_code',
       code,
       client_id: env.NEXT_PUBLIC_ELIXPO_CLIENT_ID,
-      client_secret: env.NEXT_PUBLIC_ELIXPO_CLIENT_SECRET,
+      client_secret: env.ELIXPO_CLIENT_SECRET,
       redirect_uri: redirectUri,
     }),
   });

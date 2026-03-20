@@ -14,7 +14,7 @@ export function getEnv() {
     DB: ctx.DB as D1Database,
     KV: ctx.KV as KVNamespace,
     NEXT_PUBLIC_ELIXPO_CLIENT_ID: (ctx as any).NEXT_PUBLIC_ELIXPO_CLIENT_ID || process.env.NEXT_PUBLIC_ELIXPO_CLIENT_ID || '',
-    NEXT_PUBLIC_ELIXPO_CLIENT_SECRET: (ctx as any).NEXT_PUBLIC_ELIXPO_CLIENT_SECRET || process.env.NEXT_PUBLIC_ELIXPO_CLIENT_SECRET || '',
+    ELIXPO_CLIENT_SECRET: (ctx as any).ELIXPO_CLIENT_SECRET || process.env.ELIXPO_CLIENT_SECRET || '',
     BASE_URL: (ctx as any).BASE_URL || process.env.BASE_URL || '',
   };
 }

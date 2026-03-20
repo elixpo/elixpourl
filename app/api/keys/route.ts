@@ -3,6 +3,7 @@ import { resolveUser, auditLog } from '@/lib/auth';
 import { getDB } from '@/lib/db';
 import { generateApiKey, hashApiKey } from '@/lib/utils';
 import { TIER_LIMITS } from '@/lib/types';
+import { validateLength, isValidScopes, badRequest } from '@/lib/validate';
 
 export const runtime = 'edge';
 
@@ -14,7 +15,12 @@ export async function POST(request: NextRequest) {
   const limits = TIER_LIMITS[user.tier];
   const db = getDB();
 
-  if (!name) return NextResponse.json({ error: 'name is required' }, { status: 400 });
+  if (!name || typeof name !== 'string') return badRequest('name is required');
+  const nameErr = validateLength(name.trim(), 'Name', 1, 64);
+  if (nameErr) return badRequest(nameErr);
+
+  const resolvedScopes = scopes || 'read,write';
+  if (!isValidScopes(resolvedScopes)) return badRequest('scopes must be "read" or "read,write"');
 
   const keyCount = await db.prepare('SELECT COUNT(*) as count FROM api_keys WHERE user_id = ? AND is_active = 1')
     .bind(user.id).first<{ count: number }>();
@@ -28,11 +34,11 @@ export async function POST(request: NextRequest) {
   const keyPrefix = rawKey.slice(0, 8);
 
   await db.prepare('INSERT INTO api_keys (user_id, key_hash, key_prefix, name, scopes, expires_at) VALUES (?, ?, ?, ?, ?, ?)')
-    .bind(user.id, keyHash, keyPrefix, name, scopes || 'read,write', expires_at || null).run();
+    .bind(user.id, keyHash, keyPrefix, name.trim(), resolvedScopes, expires_at || null).run();
 
-  await auditLog(user.id, 'apikey.create', 'api_key', keyPrefix);
+  auditLog(user.id, 'apikey.create', 'api_key', keyPrefix).catch(() => {});
 
-  return NextResponse.json({ key: rawKey, prefix: keyPrefix, name, scopes: scopes || 'read,write' }, { status: 201 });
+  return NextResponse.json({ key: rawKey, prefix: keyPrefix, name: name.trim(), scopes: resolvedScopes }, { status: 201 });
 }
 
 export async function GET(request: NextRequest) {
