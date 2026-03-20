@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 const siteUrl = 'https://url.elixpo.com';
-const title = 'ElixpoURL — Fast URL Shortener on the Edge';
+const title = 'ElixpoURL - Fast URL Shortener on the Edge';
 const description =
   'Shorten URLs at the speed of light. Lightning-fast redirects, powerful analytics, and a developer-first API — all running on Cloudflare\'s edge network.';
 
