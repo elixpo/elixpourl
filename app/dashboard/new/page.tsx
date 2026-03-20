@@ -18,7 +18,7 @@ export default function ShortenPage() {
   useEffect(() => {
     setMounted(true);
     fetch('/api/auth/me').then(r => r.json()).then(d => {
-      if (d.tier) setTier(d.tier);
+      if ((d as any).tier) setTier((d as any).tier);
     }).catch(() => {});
   }, []);
 

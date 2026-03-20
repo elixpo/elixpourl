@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   const user = await resolveUser(request);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { name, scopes, expires_at } = await request.json();
+  const { name, scopes, expires_at }: any = await request.json();
   const limits = TIER_LIMITS[user.tier];
   const db = getDB();
 
