@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   await kv.delete(`oauth_state:${state}`);
 
   try {
-    const tokens = await exchangeCode(code);
+    const tokens = await exchangeCode(code, request.url);
     const userInfo = await fetchUserInfo(tokens.access_token);
     const user = await upsertUser(userInfo);
 

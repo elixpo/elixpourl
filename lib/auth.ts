@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { getDB, getKV, getEnv } from './db';
+import { getDB, getKV, getEnv, getOrigin } from './db';
 import { generateSessionId, hashApiKey } from './utils';
 import type { User, ElixpoUserInfo, OAuthTokenResponse } from './types';
 
@@ -134,20 +134,22 @@ export async function destroySession(): Promise<void> {
 
 // ─── OAuth helpers ──────────────────────────────────────────
 
-export function getAuthorizeUrl(state: string): string {
+export function getAuthorizeUrl(state: string, requestUrl: string): string {
   const env = getEnv();
+  const redirectUri = `${getOrigin(requestUrl)}/api/auth/callback`;
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: env.NEXT_PUBLIC_ELIXPO_CLIENT_ID,
-    redirect_uri: env.NEXT_PUBLIC_ELIXPO_REDIRECT_URI,
+    redirect_uri: redirectUri,
     state,
     scope: 'openid profile email',
   });
   return `${ELIXPO_ACCOUNTS_BASE}/oauth/authorize?${params}`;
 }
 
-export async function exchangeCode(code: string): Promise<OAuthTokenResponse> {
+export async function exchangeCode(code: string, requestUrl: string): Promise<OAuthTokenResponse> {
   const env = getEnv();
+  const redirectUri = `${getOrigin(requestUrl)}/api/auth/callback`;
   const res = await fetch(`${ELIXPO_ACCOUNTS_BASE}/api/auth/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -156,7 +158,7 @@ export async function exchangeCode(code: string): Promise<OAuthTokenResponse> {
       code,
       client_id: env.NEXT_PUBLIC_ELIXPO_CLIENT_ID,
       client_secret: env.NEXT_PUBLIC_ELIXPO_CLIENT_SECRET,
-      redirect_uri: env.NEXT_PUBLIC_ELIXPO_REDIRECT_URI,
+      redirect_uri: redirectUri,
     }),
   });
   if (!res.ok) throw new Error(`Token exchange failed: ${await res.text()}`);

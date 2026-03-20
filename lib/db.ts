@@ -15,7 +15,12 @@ export function getEnv() {
     KV: ctx.KV as KVNamespace,
     NEXT_PUBLIC_ELIXPO_CLIENT_ID: (ctx as any).NEXT_PUBLIC_ELIXPO_CLIENT_ID || process.env.NEXT_PUBLIC_ELIXPO_CLIENT_ID || '',
     NEXT_PUBLIC_ELIXPO_CLIENT_SECRET: (ctx as any).NEXT_PUBLIC_ELIXPO_CLIENT_SECRET || process.env.NEXT_PUBLIC_ELIXPO_CLIENT_SECRET || '',
-    NEXT_PUBLIC_ELIXPO_REDIRECT_URI: (ctx as any).NEXT_PUBLIC_ELIXPO_REDIRECT_URI || process.env.NEXT_PUBLIC_ELIXPO_REDIRECT_URI || '',
     BASE_URL: (ctx as any).BASE_URL || process.env.BASE_URL || '',
   };
+}
+
+/** Derive the origin from a request URL (works for both localhost and production) */
+export function getOrigin(requestUrl: string): string {
+  const { origin } = new URL(requestUrl);
+  return origin; // e.g. http://localhost:3000 or https://url.elixpo.com
 }
