@@ -10,3 +10,4 @@ wrangler.toml
 .vscode
 .next
 .wrangler
+.vercel

@@ -36,7 +36,7 @@ check_deps() {
 
 do_build() {
   log "Building ${BOLD}$PROJECT${RESET} with @cloudflare/next-on-pages..."
-  npx @cloudflare/next-on-pages
+  sudo npx @cloudflare/next-on-pages
   log "Build complete → ${DIM}$OUTDIR${RESET}"
 }
 
@@ -46,13 +46,13 @@ do_deploy() {
     do_build
   fi
   log "Deploying to Cloudflare Pages..."
-  npx wrangler pages deploy "$OUTDIR" --project-name="$PROJECT"
+  sudo npx wrangler pages deploy "$OUTDIR" --project-name="$PROJECT"
   log "Deploy complete"
 }
 
 do_migrate() {
   log "Running D1 migrations (remote)..."
-  npx wrangler d1 migrations apply "$PROJECT" --remote
+  sudo npx wrangler d1 migrations apply "$PROJECT" --remote
   log "Migrations applied"
 }
 
