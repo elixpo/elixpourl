@@ -55,31 +55,24 @@ Every redirect runs on Cloudflare's global edge network, meaning your links reso
 
 Head to **[url.elixpo.com](https://url.elixpo.com)** and sign in with your Elixpo account. You can start shortening URLs immediately on the free plan — no credit card required.
 
-## API
+## API Documentation
 
-ElixpoURL exposes a REST API for programmatic access. Authenticate with a Bearer token from your API keys page.
-
-```
-POST   /api/urls              Create a short URL
-GET    /api/urls              List your URLs
-GET    /api/urls/:code        Get a single URL
-PATCH  /api/urls/:code        Update a URL
-DELETE /api/urls/:code        Delete a URL
-GET    /api/urls/:code/analytics   Click analytics
-```
-
-Full documentation is available at [url.elixpo.com/docs](https://url.elixpo.com/docs).
+> Full documentation is available at [url.elixpo.com/docs](https://url.elixpo.com/docs).
 
 ## Star history
 
 <p align="center">
-  <a href="https://star-history.com/#elixpo/elixpourl&Date">
-    <img src="https://api.star-history.com/svg?repos=elixpo/elixpourl&type=Date&theme=dark" alt="Star History" width="100%" />
-  </a>
+<a href="https://www.star-history.com/?repos=elixpo%2Felixpourl&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=elixpo/elixpourl&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=elixpo/elixpourl&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=elixpo/elixpourl&type=date&legend=top-left" />
+ </picture>
+</a>
 </p>
 
 ---
 
 <p align="center">
-  Built by <a href="https://elixpo.com">Elixpo</a>
+  Made with ❤️ by the Elixpo team. Visit us at <a href="https://elixpo.com">elixpo.com</a>.
 </p>

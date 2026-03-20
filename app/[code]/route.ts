@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDB, getKV } from '@/lib/db';
 import { parseUserAgent, hashIp } from '@/lib/utils';
-import type { UrlRecord } from '@/lib/types';
 
 export const runtime = 'edge';
 
@@ -15,44 +14,71 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   const kv = getKV();
-  const db = getDB();
 
-  // FAST PATH: KV cache
+  // FAST PATH: KV cache — no DB hit at all
   const cached = await kv.get(`url:${code}`);
   if (cached) {
     const { url, id } = JSON.parse(cached);
-    // Track click in background
-    trackClick(db, id, request).catch(() => {});
-    return NextResponse.redirect(url, 302);
+    // Fire-and-forget: use waitUntil to truly detach click tracking from response
+    const db = getDB();
+    scheduleTracking(db, id, request);
+    return redirect(url);
   }
 
-  // SLOW PATH: D1
+  // SLOW PATH: D1 lookup
+  const db = getDB();
   const urlRecord = await db
     .prepare('SELECT id, original_url, is_active, expires_at FROM urls WHERE short_code = ?')
     .bind(code)
-    .first<UrlRecord>();
+    .first<{ id: number; original_url: string; is_active: number; expires_at: string | null }>();
 
   if (!urlRecord || !urlRecord.is_active) {
     return new NextResponse(null, { status: 404 });
   }
 
-  // Check expiry
   if (urlRecord.expires_at && new Date(urlRecord.expires_at) < new Date()) {
+    // Clean up expired entry from KV
+    kv.delete(`url:${code}`).catch(() => {});
     return new NextResponse('This link has expired', { status: 410 });
   }
 
-  // Re-populate KV cache
+  // Re-populate KV cache with appropriate TTL
   const ttl = urlRecord.expires_at
     ? Math.max(Math.floor((new Date(urlRecord.expires_at).getTime() - Date.now()) / 1000), 60)
-    : 86400;
+    : 86400; // 24h default
 
   kv.put(`url:${code}`, JSON.stringify({ url: urlRecord.original_url, id: urlRecord.id }), { expirationTtl: ttl })
     .catch(() => {});
 
-  // Track click in background
-  trackClick(db, urlRecord.id, request).catch(() => {});
+  scheduleTracking(db, urlRecord.id, request);
+  return redirect(urlRecord.original_url);
+}
 
-  return NextResponse.redirect(urlRecord.original_url, 302);
+/** Build a 302 redirect with cache-friendly headers */
+function redirect(url: string): NextResponse {
+  return new NextResponse(null, {
+    status: 302,
+    headers: {
+      Location: url,
+      'Cache-Control': 'private, no-cache, no-store',
+      'X-Robots-Tag': 'noindex',
+    },
+  });
+}
+
+/** Fire-and-forget click tracking — never blocks the redirect */
+function scheduleTracking(db: D1Database, urlId: number, request: NextRequest): void {
+  try {
+    const ctx = (globalThis as any).__nextOnPagesReqCtx?.ctx as ExecutionContext | undefined;
+    const promise = trackClick(db, urlId, request);
+    if (ctx?.waitUntil) {
+      ctx.waitUntil(promise);
+    } else {
+      promise.catch(() => {});
+    }
+  } catch {
+    // Silently ignore — never block redirects for analytics
+  }
 }
 
 async function trackClick(db: D1Database, urlId: number, request: NextRequest): Promise<void> {
