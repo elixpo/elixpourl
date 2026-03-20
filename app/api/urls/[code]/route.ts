@@ -23,7 +23,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { code } = await params;
-  const body = await request.json();
+  const body: any = await request.json();
   const db = getDB();
   const kv = getKV();
 

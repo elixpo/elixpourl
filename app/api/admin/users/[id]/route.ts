@@ -10,7 +10,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
   const { id } = await params;
   const userId = parseInt(id);
-  const body = await request.json();
+  const body: any = await request.json();
   const db = getDB();
 
   if (body.role === 'admin') {
