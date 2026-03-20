@@ -280,7 +280,7 @@ export default function PricingPage() {
 
                   {/* CTA */}
                   <Link
-                    href="/login"
+                    href="/api/auth/login"
                     className="no-underline text-center py-3 rounded-xl text-sm font-semibold transition-all duration-300"
                     style={{
                       background: isPopular

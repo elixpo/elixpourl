@@ -9,12 +9,13 @@ export function getKV(): KVNamespace {
 }
 
 export function getEnv() {
-  return getRequestContext().env as {
-    DB: D1Database;
-    KV: KVNamespace;
-    OAUTH_CLIENT_ID: string;
-    OAUTH_CLIENT_SECRET: string;
-    OAUTH_REDIRECT_URI: string;
-    BASE_URL: string;
+  const ctx = getRequestContext().env;
+  return {
+    DB: ctx.DB as D1Database,
+    KV: ctx.KV as KVNamespace,
+    NEXT_PUBLIC_ELIXPO_CLIENT_ID: (ctx as any).NEXT_PUBLIC_ELIXPO_CLIENT_ID || process.env.NEXT_PUBLIC_ELIXPO_CLIENT_ID || '',
+    NEXT_PUBLIC_ELIXPO_CLIENT_SECRET: (ctx as any).NEXT_PUBLIC_ELIXPO_CLIENT_SECRET || process.env.NEXT_PUBLIC_ELIXPO_CLIENT_SECRET || '',
+    NEXT_PUBLIC_ELIXPO_REDIRECT_URI: (ctx as any).NEXT_PUBLIC_ELIXPO_REDIRECT_URI || process.env.NEXT_PUBLIC_ELIXPO_REDIRECT_URI || '',
+    BASE_URL: (ctx as any).BASE_URL || process.env.BASE_URL || '',
   };
 }

@@ -138,8 +138,8 @@ export function getAuthorizeUrl(state: string): string {
   const env = getEnv();
   const params = new URLSearchParams({
     response_type: 'code',
-    client_id: env.OAUTH_CLIENT_ID,
-    redirect_uri: env.OAUTH_REDIRECT_URI,
+    client_id: env.NEXT_PUBLIC_ELIXPO_CLIENT_ID,
+    redirect_uri: env.NEXT_PUBLIC_ELIXPO_REDIRECT_URI,
     state,
     scope: 'openid profile email',
   });
@@ -154,9 +154,9 @@ export async function exchangeCode(code: string): Promise<OAuthTokenResponse> {
     body: JSON.stringify({
       grant_type: 'authorization_code',
       code,
-      client_id: env.OAUTH_CLIENT_ID,
-      client_secret: env.OAUTH_CLIENT_SECRET,
-      redirect_uri: env.OAUTH_REDIRECT_URI,
+      client_id: env.NEXT_PUBLIC_ELIXPO_CLIENT_ID,
+      client_secret: env.NEXT_PUBLIC_ELIXPO_CLIENT_SECRET,
+      redirect_uri: env.NEXT_PUBLIC_ELIXPO_REDIRECT_URI,
     }),
   });
   if (!res.ok) throw new Error(`Token exchange failed: ${await res.text()}`);

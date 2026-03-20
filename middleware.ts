@@ -6,13 +6,13 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get('session');
 
-  // Protect dashboard/profile/admin routes
+  // Protect dashboard/profile/admin routes — kick to SSO
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   if (isProtected && !sessionCookie) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/api/auth/login', request.url));
   }
 
-  // If logged in and visiting login, redirect to dashboard
+  // If logged in and visiting /login, redirect to dashboard
   if (pathname === '/login' && sessionCookie) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }

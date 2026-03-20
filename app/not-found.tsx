@@ -63,7 +63,7 @@ export default function NotFound() {
           <Link href="/" className="btn-lime no-underline px-6 py-2.5 rounded-xl">
             Go Home
           </Link>
-          <Link href="/dashboard" className="btn-glass no-underline px-6 py-2.5 rounded-xl">
+          <Link href="/api/auth/login" className="btn-glass no-underline px-6 py-2.5 rounded-xl">
             Dashboard
           </Link>
         </motion.div>

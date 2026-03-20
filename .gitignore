@@ -9,3 +9,4 @@ wrangler.toml
 *.tsbuildinfo
 .vscode
 .next
+.wrangler
