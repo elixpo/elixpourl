@@ -150,16 +150,19 @@ export function getAuthorizeUrl(state: string, requestUrl: string): string {
 export async function exchangeCode(code: string, requestUrl: string): Promise<OAuthTokenResponse> {
   const env = getEnv();
   const redirectUri = `${getOrigin(requestUrl)}/api/auth/callback`;
+  const payload = {
+    grant_type: 'authorization_code',
+    code,
+    client_id: env.NEXT_PUBLIC_ELIXPO_CLIENT_ID,
+    client_secret: env.ELIXPO_CLIENT_SECRET,
+    redirect_uri: redirectUri,
+  };
+  console.log('[exchangeCode] payload:', JSON.stringify(payload));
+  console.log('[exchangeCode] url:', `${ELIXPO_ACCOUNTS_BASE}/api/auth/token`);
   const res = await fetch(`${ELIXPO_ACCOUNTS_BASE}/api/auth/token`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'authorization_code',
-      code,
-      client_id: env.NEXT_PUBLIC_ELIXPO_CLIENT_ID,
-      client_secret: env.ELIXPO_CLIENT_SECRET,
-      redirect_uri: redirectUri,
-    }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(`Token exchange failed: ${await res.text()}`);
   return res.json() as Promise<OAuthTokenResponse>;
