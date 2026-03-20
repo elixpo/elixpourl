@@ -2,7 +2,7 @@
   <img src="public/logo.png" alt="ElixpoURL" width="80" />
 </p>
 
-<h1 align="center">ElixpoURL</h1>
+<h1 align="center">Elixpo-URL</h1>
 
 <p align="center">
   <strong>Fast URL shortener running on the edge.</strong>

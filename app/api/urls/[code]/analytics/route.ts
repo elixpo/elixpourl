@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { resolveUser } from '@/lib/auth';
 import { getDB } from '@/lib/db';
 import { TIER_LIMITS } from '@/lib/types';
+import { clampInt } from '@/lib/validate';
 
 export const runtime = 'edge';
 
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const { code } = await params;
   const url = new URL(request.url);
-  const days = Math.min(parseInt(url.searchParams.get('days') || '7'), limits.maxClicksRetention);
+  const days = clampInt(url.searchParams.get('days'), 7, 1, limits.maxClicksRetention);
   const since = new Date(Date.now() - days * 86400000).toISOString();
   const db = getDB();
 
@@ -27,13 +28,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const [timeline, countries, browsers, devices, referers] = await Promise.all([
     db.prepare('SELECT DATE(clicked_at) as date, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? GROUP BY DATE(clicked_at) ORDER BY date')
       .bind(urlRecord.id, since).all<{ date: string; count: number }>(),
-    db.prepare('SELECT country, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? GROUP BY country ORDER BY count DESC LIMIT 10')
+    db.prepare('SELECT country, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? GROUP BY country ORDER BY count DESC LIMIT 20')
       .bind(urlRecord.id, since).all<{ country: string; count: number }>(),
-    db.prepare('SELECT browser, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? GROUP BY browser ORDER BY count DESC')
+    db.prepare('SELECT browser, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? GROUP BY browser ORDER BY count DESC LIMIT 20')
       .bind(urlRecord.id, since).all<{ browser: string; count: number }>(),
-    db.prepare('SELECT device, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? GROUP BY device ORDER BY count DESC')
+    db.prepare('SELECT device, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? GROUP BY device ORDER BY count DESC LIMIT 10')
       .bind(urlRecord.id, since).all<{ device: string; count: number }>(),
-    db.prepare('SELECT referer, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? AND referer IS NOT NULL GROUP BY referer ORDER BY count DESC LIMIT 10')
+    db.prepare('SELECT referer, COUNT(*) as count FROM clicks WHERE url_id = ? AND clicked_at >= ? AND referer IS NOT NULL GROUP BY referer ORDER BY count DESC LIMIT 20')
       .bind(urlRecord.id, since).all<{ referer: string; count: number }>(),
   ]);
 
