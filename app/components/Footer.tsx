@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const productLinks = [
-  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Home', href: '/dashboard' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'API Docs', href: '/docs' },
   { label: 'Status', href: 'https://status.elixpo.com' },
