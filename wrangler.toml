@@ -1,0 +1,18 @@
+name = "elixpourl"
+compatibility_date = "2024-06-20"
+
+# Next.js on Cloudflare uses @opennextjs/cloudflare
+# Run: npx @opennextjs/cloudflare build
+
+routes = [
+  { pattern = "url.elixpo.com", custom_domain = true }
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "elixpourl"
+database_id = "YOUR_D1_DATABASE_ID"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "YOUR_KV_NAMESPACE_ID"

@@ -1,0 +1,30 @@
+{
+  "name": "elixpourl",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "deploy": "npx @opennextjs/cloudflare build && npx wrangler deploy",
+    "db:migrate": "npx wrangler d1 execute elixpourl --file=./schema.sql",
+    "db:migrate:local": "npx wrangler d1 execute elixpourl --local --file=./schema.sql",
+    "db:migrate:remote": "npx wrangler d1 execute elixpourl --remote --file=./schema.sql"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240620.0",
+    "@opennextjs/cloudflare": "^0.5.0",
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.5.0",
+    "wrangler": "^3.60.0"
+  }
+}
