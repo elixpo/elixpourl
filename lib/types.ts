@@ -76,6 +76,7 @@ export interface ElixpoUserInfo {
   isAdmin: boolean;
   provider: string;
   emailVerified: boolean;
+  avatar: string | null;
 }
 
 export interface OAuthTokenResponse {

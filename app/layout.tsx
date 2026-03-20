@@ -4,6 +4,10 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'ElixpoURL',
   description: 'URL shortener for the Elixpo ecosystem',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({

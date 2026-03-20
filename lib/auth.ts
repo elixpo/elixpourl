@@ -183,10 +183,10 @@ export async function upsertUser(userInfo: ElixpoUserInfo): Promise<User> {
 
   if (existing) {
     await db
-      .prepare(`UPDATE users SET email = ?, display_name = ?, updated_at = datetime('now') WHERE id = ?`)
-      .bind(userInfo.email, userInfo.displayName, existing.id)
+      .prepare(`UPDATE users SET email = ?, display_name = ?, avatar_url = ?, updated_at = datetime('now') WHERE id = ?`)
+      .bind(userInfo.email, userInfo.displayName, userInfo.avatar || null, existing.id)
       .run();
-    return { ...existing, email: userInfo.email, display_name: userInfo.displayName };
+    return { ...existing, email: userInfo.email, display_name: userInfo.displayName, avatar_url: userInfo.avatar || null };
   }
 
   const user = await db
@@ -194,7 +194,7 @@ export async function upsertUser(userInfo: ElixpoUserInfo): Promise<User> {
       `INSERT INTO users (elixpo_id, email, display_name, avatar_url, role)
        VALUES (?, ?, ?, ?, ?) RETURNING *`
     )
-    .bind(userInfo.id, userInfo.email, userInfo.displayName, null, userInfo.isAdmin ? 'admin' : 'user')
+    .bind(userInfo.id, userInfo.email, userInfo.displayName, userInfo.avatar || null, userInfo.isAdmin ? 'admin' : 'user')
     .first<User>();
 
   return user!;
