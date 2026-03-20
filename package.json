@@ -5,23 +5,23 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "deploy": "npx @opennextjs/cloudflare build && npx wrangler deploy",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "pages:deploy": "npx @cloudflare/next-on-pages && npx wrangler pages deploy .vercel/output/static",
     "db:migrate": "npx wrangler d1 migrations apply elixpourl",
     "db:migrate:local": "npx wrangler d1 migrations apply elixpourl --local",
     "db:migrate:remote": "npx wrangler d1 migrations apply elixpourl --remote"
   },
   "dependencies": {
     "@cloudflare/next-on-pages": "^1.12.0",
-    "next": "^14.2.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0"
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240620.0",
-    "@opennextjs/cloudflare": "^0.5.0",
     "@types/node": "^20.14.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
